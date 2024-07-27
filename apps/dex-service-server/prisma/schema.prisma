@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pair {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokenB    String?
+  tokenA    String?
+  liquidity Float?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Swap {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tokenB    String?
+  tokenA    String?
+  amountA   Float?
+  amountB   Float?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Pool {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?
+  reserveA  Float?
+  reserveB  Float?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model User {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  firstName     String?
+  lastName      String?
+  username      String   @unique
+  email         String?  @unique
+  password      String
+  roles         Json
+  userName      String?
+  walletAddress String?
+  swaps         Swap[]
+  pools         Pool[]
+  pairs         Pair[]
+}
